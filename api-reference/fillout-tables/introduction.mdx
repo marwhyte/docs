@@ -1,0 +1,70 @@
+---
+title: 'Fillout Tables API'
+description: 'Complete API reference for managing bases, tables, fields, views, and records'
+---
+
+## Welcome to Fillout Tables API
+
+The Fillout Tables API provides comprehensive functionality for managing database-like structures with bases, tables, fields, views, and records. This RESTful API allows you to build powerful data management applications.
+
+**Base URL:** `https://api.fillout.com/v1/admin/bases`
+
+## Key Concepts
+
+<CardGroup cols={2}>
+  <Card title="Bases" icon="database">
+    Top-level containers that hold multiple tables and their configurations
+  </Card>
+  <Card title="Tables" icon="table">
+    Structured data containers within bases that hold records and field definitions
+  </Card>
+  <Card title="Fields" icon="list">
+    Column definitions that specify data types and validation rules for records
+  </Card>
+  <Card title="Views" icon="eye">
+    Customizable displays of table data with filtering, sorting, and layout options
+  </Card>
+</CardGroup>
+
+## Authentication
+
+All API endpoints require authentication using Bearer tokens. Include your API token in the Authorization header:
+
+```bash
+Authorization: Bearer YOUR_API_TOKEN
+```
+
+<Warning>
+  Ensure your API token has the appropriate permissions for the requested base or organization.
+</Warning>
+
+## Rate Limits
+
+API requests are subject to rate limiting to ensure fair usage and system stability. Standard limits apply per API token.
+
+## Error Handling
+
+The API uses standard HTTP status codes and returns detailed error messages:
+
+- `200` - Success
+- `201` - Created successfully  
+- `400` - Bad request (validation errors)
+- `401` - Unauthorized
+- `403` - Forbidden (insufficient permissions)
+- `404` - Resource not found
+- `409` - Conflict (duplicate names, etc.)
+- `500` - Internal server error
+
+Error responses include descriptive messages to help identify and resolve issues.
+
+## Getting Started
+
+1. **Authentication** - Obtain your API token from your Fillout dashboard
+2. **Create a Base** - Start by creating a new base container
+3. **Define Fields** - Set up your table structure with appropriate field types
+4. **Create Views** - Organize how your data is displayed and filtered
+5. **Manage Records** - Add, update, and retrieve your data
+
+<Card title="Need Help?" icon="question-circle">
+  Check out our comprehensive endpoint documentation and field type reference for detailed implementation guidance.
+</Card> 

@@ -1,0 +1,101 @@
+---
+title: 'Create Base'
+description: 'Creates a new base with the specified public ID'
+---
+
+## Create Base
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.fillout.com/v1/admin/bases" \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "basePublicId": "my-new-base-001"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.fillout.com/v1/admin/bases', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    basePublicId: 'my-new-base-001'
+  })
+});
+
+const base = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://api.fillout.com/v1/admin/bases',
+    headers={
+        'Authorization': 'Bearer YOUR_API_TOKEN',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'basePublicId': 'my-new-base-001'
+    }
+)
+
+base = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 201 Created
+{
+  "id": "base_12345",
+  "basePublicId": "my-new-base-001",
+  "name": "My New Base",
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-15T10:30:00Z",
+  "tables": [],
+  "permissions": {
+    "canEdit": true,
+    "canDelete": true,
+    "canShare": true
+  }
+}
+```
+
+```json 400 Bad Request
+{
+  "error": "ValidationError",
+  "message": "basePublicId is required and must be unique",
+  "details": {
+    "field": "basePublicId",
+    "code": "REQUIRED"
+  }
+}
+```
+</ResponseExample>
+
+Creates a new base with the specified public identifier. The base serves as a top-level container for tables and their associated data.
+
+### Request Body
+
+<ParamField body="basePublicId" type="string" required>
+  Unique identifier for the base. Must be unique within your organization and contain only alphanumeric characters, hyphens, and underscores.
+</ParamField>
+
+### Response
+
+Returns the newly created base metadata object including:
+
+- **id** - Internal base identifier
+- **basePublicId** - The public identifier you specified
+- **name** - Display name for the base
+- **createdAt** / **updatedAt** - Timestamps
+- **tables** - Array of tables (empty for new bases)
+- **permissions** - Access permissions for the authenticated user
+
+<Note>
+  After creating a base, you can add tables and configure fields to start storing data.
+</Note> 

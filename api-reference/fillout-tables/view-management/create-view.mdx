@@ -1,0 +1,252 @@
+---
+title: 'Create View'
+description: 'Creates a new view for organizing and filtering table data'
+---
+
+## Create View
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.fillout.com/v1/admin/bases/my-base/tables/customers/views" \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Active Customers",
+    "type": "grid",
+    "config": {
+      "filters": {
+        "status": "active"
+      },
+      "sorts": [
+        {
+          "fieldId": "signup_date",
+          "direction": "desc"
+        }
+      ],
+      "hiddenFields": ["internal_notes"],
+      "rowHeight": "medium",
+      "columnWidths": {
+        "name": 200,
+        "email": 250
+      }
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.fillout.com/v1/admin/bases/my-base/tables/customers/views', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Active Customers',
+    type: 'grid',
+    config: {
+      filters: {
+        status: 'active'
+      },
+      sorts: [
+        {
+          fieldId: 'signup_date',
+          direction: 'desc'
+        }
+      ],
+      hiddenFields: ['internal_notes'],
+      rowHeight: 'medium',
+      columnWidths: {
+        name: 200,
+        email: 250
+      }
+    }
+  })
+});
+
+const view = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://api.fillout.com/v1/admin/bases/my-base/tables/customers/views',
+    headers={
+        'Authorization': 'Bearer YOUR_API_TOKEN',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'name': 'Active Customers',
+        'type': 'grid',
+        'config': {
+            'filters': {'status': 'active'},
+            'sorts': [
+                {'fieldId': 'signup_date', 'direction': 'desc'}
+            ],
+            'hiddenFields': ['internal_notes'],
+            'rowHeight': 'medium',
+            'columnWidths': {
+                'name': 200,
+                'email': 250
+            }
+        }
+    }
+)
+
+view = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 201 Created
+{
+  "id": "view_12345",
+  "name": "Active Customers",
+  "type": "grid",
+  "config": {
+    "filters": {
+      "status": "active"
+    },
+    "sorts": [
+      {
+        "fieldId": "signup_date",
+        "direction": "desc"
+      }
+    ],
+    "hiddenFields": ["internal_notes"],
+    "rowHeight": "medium",
+    "columnWidths": {
+      "name": 200,
+      "email": 250
+    },
+    "orderedColumnIds": ["name", "email", "status", "phone", "signup_date"]
+  },
+  "isDefault": false,
+  "createdAt": "2024-01-25T10:30:00Z",
+  "updatedAt": "2024-01-25T10:30:00Z",
+  "createdBy": "user_456"
+}
+```
+
+```json 400 Bad Request
+{
+  "error": "ValidationError",
+  "message": "Invalid field ID in sorts configuration",
+  "details": {
+    "field": "sorts[0].fieldId",
+    "code": "INVALID_FIELD_ID"
+  }
+}
+```
+</ResponseExample>
+
+Creates a new view for the specified table with custom filtering, sorting, and display options. Views allow users to see different perspectives of the same data.
+
+### URL Parameters
+
+<ParamField path="basePublicId" type="string" required>
+  The public identifier of the base containing the table
+</ParamField>
+
+<ParamField path="tableId" type="string" required>
+  The identifier of the table to create the view for
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string" required>
+  Display name for the view. Must be unique within the table.
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  View type. Currently only `"grid"` is supported.
+</ParamField>
+
+<ParamField body="config" type="object" optional>
+  View configuration object containing display and filtering options:
+</ParamField>
+
+### Configuration Options
+
+<ParamField name="filters" type="object">
+  Filter conditions to apply to records. Uses the same format as the List Records endpoint.
+</ParamField>
+
+<ParamField name="sorts" type="array">
+  Array of sort configurations, each containing:
+  - `fieldId` (string) - Field to sort by
+  - `direction` (string) - Sort direction: `"asc"` or `"desc"`
+</ParamField>
+
+<ParamField name="hiddenFields" type="array">
+  Array of field IDs to hide from the view display
+</ParamField>
+
+<ParamField name="rowHeight" type="string">
+  Row height setting: `"short"`, `"medium"`, or `"tall"`
+</ParamField>
+
+<ParamField name="columnWidths" type="object">
+  Object mapping field IDs to column widths in pixels
+</ParamField>
+
+<ParamField name="orderedColumnIds" type="array">
+  Array of field IDs specifying the column order. If not provided, uses the table's default field order.
+</ParamField>
+
+### Response
+
+Returns the created view object including:
+
+- **id** - Unique view identifier
+- **name** - View display name
+- **type** - View type
+- **config** - Complete view configuration
+- **isDefault** - Whether this is the table's default view
+- **createdAt** / **updatedAt** - Timestamps
+- **createdBy** - ID of the user who created the view
+
+### Filter Configuration
+
+Views support the same filtering capabilities as the List Records endpoint:
+
+```json
+{
+  "filters": {
+    "status": "active",
+    "signup_date": {
+      "gte": "2024-01-01T00:00:00Z"
+    },
+    "name": {
+      "contains": "Smith"
+    }
+  }
+}
+```
+
+### Sort Configuration
+
+Multiple sort criteria are applied in order:
+
+```json
+{
+  "sorts": [
+    {
+      "fieldId": "priority",
+      "direction": "desc"
+    },
+    {
+      "fieldId": "created_at",
+      "direction": "asc"
+    }
+  ]
+}
+```
+
+<Info>
+  Views are saved configurations that can be shared among team members. They don't duplicate data but provide different ways to display and filter the same records.
+</Info>
+
+<Note>
+  If `orderedColumnIds` is not specified, the view will use the table's current field order and automatically include new fields added to the table.
+</Note> 

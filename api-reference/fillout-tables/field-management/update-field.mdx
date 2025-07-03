@@ -1,0 +1,126 @@
+---
+title: 'Update Field'
+description: 'Update an existing field in a base'
+---
+
+Update an existing field's properties in a base. You can modify the field name, type, and configuration options.
+
+### Base URL
+```
+PUT https://api.fillout.com/v1/tables/bases/:baseId/fields/:fieldId
+```
+
+### Parameters
+
+<ParamField header path="baseId" type="string" required>
+  The ID of the base containing the field
+</ParamField>
+
+<ParamField header path="fieldId" type="string" required>
+  The ID of the field to update
+</ParamField>
+
+<ParamField body="name" type="string">
+  New name for the field
+</ParamField>
+
+<ParamField body="type" type="string">
+  New type for the field. See [Field Types Overview](/api-reference/fillout-tables/field-types/overview) for available options.
+</ParamField>
+
+<ParamField body="template" type="object">
+  Optional field-specific configuration object. The structure depends on the field type.
+</ParamField>
+
+### Response
+
+<ResponseField name="id" type="string">
+  Field identifier
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Updated field name
+</ResponseField>
+
+<ResponseField name="type" type="string">
+  Field type identifier
+</ResponseField>
+
+<ResponseField name="order" type="number">
+  Display order position
+</ResponseField>
+
+<ResponseField name="template" type="object">
+  Field-specific configuration (if any)
+</ResponseField>
+
+### Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X PUT https://api.fillout.com/v1/tables/bases/base_123/fields/fld_abc \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Field Name",
+    "type": "number",
+    "template": {
+      "precision": 2
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.fillout.com/v1/tables/bases/base_123/fields/fld_abc', {
+  method: 'PUT',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Updated Field Name',
+    type: 'number',
+    template: {
+      precision: 2
+    }
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.put(
+    'https://api.fillout.com/v1/tables/bases/base_123/fields/fld_abc',
+    headers={
+        'Authorization': 'Bearer YOUR_API_KEY',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'name': 'Updated Field Name',
+        'type': 'number',
+        'template': {
+            'precision': 2
+        }
+    }
+)
+
+data = response.json()
+```
+</CodeGroup>
+
+### Example Response
+
+```json
+{
+  "id": "fld_abc",
+  "name": "Updated Field Name",
+  "type": "number",
+  "order": 2,
+  "template": {
+    "precision": 2
+  }
+}
+``` 

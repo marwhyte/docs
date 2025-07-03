@@ -1,0 +1,118 @@
+---
+title: 'List Bases'
+description: 'Returns a list of all bases accessible to the authenticated user'
+---
+
+## List Bases
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.fillout.com/v1/admin/bases" \
+  -H "Authorization: Bearer YOUR_API_TOKEN"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.fillout.com/v1/admin/bases', {
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN'
+  }
+});
+
+const bases = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://api.fillout.com/v1/admin/bases',
+    headers={
+        'Authorization': 'Bearer YOUR_API_TOKEN'
+    }
+)
+
+bases = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 Success
+{
+  "bases": [
+    {
+      "id": "base_12345",
+      "basePublicId": "customer-database",
+      "name": "Customer Database", 
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-20T14:22:00Z",
+      "tableCount": 3,
+      "recordCount": 1247,
+      "permissions": {
+        "canEdit": true,
+        "canDelete": true,
+        "canShare": true
+      }
+    },
+    {
+      "id": "base_67890",
+      "basePublicId": "project-tracker",
+      "name": "Project Tracker",
+      "createdAt": "2024-01-10T09:15:00Z", 
+      "updatedAt": "2024-01-22T11:45:00Z",
+      "tableCount": 5,
+      "recordCount": 892,
+      "permissions": {
+        "canEdit": true,
+        "canDelete": false,
+        "canShare": true
+      }
+    }
+  ],
+  "pagination": {
+    "total": 2,
+    "hasMore": false
+  }
+}
+```
+
+```json 401 Unauthorized
+{
+  "error": "AuthenticationError",
+  "message": "Invalid or missing API token"
+}
+```
+</ResponseExample>
+
+Retrieves all bases that the authenticated user has access to, including summary information about each base.
+
+### Response
+
+Returns an array of base metadata objects, each containing:
+
+- **id** - Internal base identifier
+- **basePublicId** - Public identifier for the base
+- **name** - Display name of the base
+- **createdAt** / **updatedAt** - Creation and modification timestamps
+- **tableCount** - Number of tables in the base
+- **recordCount** - Total number of records across all tables
+- **permissions** - User's access permissions for this base
+
+### Permissions
+
+The response includes permission information for each base:
+
+<ParamField name="canEdit" type="boolean">
+  Whether the user can modify the base structure and data
+</ParamField>
+
+<ParamField name="canDelete" type="boolean">
+  Whether the user can delete the base
+</ParamField>
+
+<ParamField name="canShare" type="boolean">
+  Whether the user can share the base with others
+</ParamField>
+
+<Note>
+  Bases are returned in order of most recently updated first. Only bases where you have at least read access will be included.
+</Note> 

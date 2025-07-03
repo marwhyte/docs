@@ -1,0 +1,171 @@
+---
+title: 'Copy Base'
+description: 'Creates a copy of an existing base with a new public ID'
+---
+
+## Copy Base
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.fillout.com/v1/admin/bases/copy" \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sourceBasePublicId": "customer-database",
+    "targetBasePublicId": "customer-database-backup"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.fillout.com/v1/admin/bases/copy', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    sourceBasePublicId: 'customer-database',
+    targetBasePublicId: 'customer-database-backup'
+  })
+});
+
+const newBase = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://api.fillout.com/v1/admin/bases/copy',
+    headers={
+        'Authorization': 'Bearer YOUR_API_TOKEN',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'sourceBasePublicId': 'customer-database',
+        'targetBasePublicId': 'customer-database-backup'
+    }
+)
+
+new_base = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 201 Created
+{
+  "id": "base_67890",
+  "basePublicId": "customer-database-backup",
+  "name": "Customer Database (Copy)",
+  "description": "Copy of Customer Database",
+  "createdAt": "2024-01-25T16:45:00Z",
+  "updatedAt": "2024-01-25T16:45:00Z",
+  "tables": [
+    {
+      "id": "table_new_001",
+      "name": "Customers",
+      "fieldCount": 8,
+      "recordCount": 542
+    },
+    {
+      "id": "table_new_002",
+      "name": "Orders", 
+      "fieldCount": 12,
+      "recordCount": 1247
+    }
+  ],
+  "sourceBase": {
+    "id": "base_12345",
+    "basePublicId": "customer-database"
+  },
+  "copySettings": {
+    "includeData": true,
+    "includeViews": true,
+    "includePermissions": false
+  }
+}
+```
+
+```json 400 Bad Request
+{
+  "error": "ValidationError",
+  "message": "Target base ID already exists",
+  "details": {
+    "field": "targetBasePublicId",
+    "code": "DUPLICATE_ID"
+  }
+}
+```
+
+```json 404 Not Found
+{
+  "error": "NotFoundError",
+  "message": "Source base 'customer-database' not found or access denied"
+}
+```
+</ResponseExample>
+
+Creates a complete copy of an existing base with all its tables, fields, records, and views. The new base will have a different public ID but maintain the same structure and data.
+
+### Request Body
+
+<ParamField body="sourceBasePublicId" type="string" required>
+  Public ID of the base to copy from. You must have read access to this base.
+</ParamField>
+
+<ParamField body="targetBasePublicId" type="string" required>
+  Public ID for the new base. Must be unique within your organization.
+</ParamField>
+
+### What Gets Copied
+
+The copy operation includes:
+
+<CardGroup cols={2}>
+  <Card title="Structure" icon="sitemap">
+    - All tables and their configurations
+    - All field definitions and settings
+    - All views and their filter/sort settings
+  </Card>
+  <Card title="Data" icon="database">
+    - All records across all tables
+    - File attachments (new copies created)
+    - Linked record relationships (updated to new IDs)
+  </Card>
+</CardGroup>
+
+### What Doesn't Get Copied
+
+The following items are not included in the copy:
+
+- **Permissions and collaborators** - The new base starts with default permissions
+- **API tokens** - New tokens must be generated for the copied base  
+- **Webhook configurations** - Webhooks must be reconfigured for the new base
+- **Usage analytics** - Analytics start fresh for the new base
+
+### Response
+
+Returns the newly created base metadata object including:
+
+- **id** - New internal base identifier
+- **basePublicId** - The target public ID you specified
+- **name** - Display name (with "Copy" suffix)
+- **tables** - Array of copied tables with new IDs
+- **sourceBase** - Reference to the original base
+- **copySettings** - Configuration used for the copy operation
+
+### Copy Process
+
+The copy operation happens asynchronously for large bases:
+
+1. **Immediate response** - API returns the new base structure
+2. **Background processing** - Data is copied in the background
+3. **Completion notification** - You can poll the base status or receive webhooks
+
+<Info>
+  Large bases with many records may take several minutes to complete the copy process. The new base will be accessible immediately, but data may still be copying in the background.
+</Info>
+
+<Note>
+  All linked record relationships are automatically updated to reference the corresponding records in the new base, maintaining data integrity.
+</Note> 

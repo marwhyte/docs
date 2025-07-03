@@ -1,0 +1,384 @@
+---
+title: 'Field Types Reference'
+description: 'Complete reference for all available field types and their configurations'
+---
+
+## Field Types Overview
+
+Fillout Tables supports a wide variety of field types to handle different data structures and validation requirements. Each field type has specific configuration options defined in the `template` property.
+
+## Text Fields
+
+### Single Line Text
+```json
+{
+  "name": "Full Name",
+  "type": "single_line_text",
+  "template": {},
+  "isRequired": true
+}
+```
+- **Use cases:** Names, titles, short descriptions
+- **Template:** No configuration required
+
+### Long Text  
+```json
+{
+  "name": "Description", 
+  "type": "long_text",
+  "template": {},
+  "isRequired": false
+}
+```
+- **Use cases:** Comments, descriptions, notes
+- **Template:** No configuration required
+
+### Email
+```json
+{
+  "name": "Contact Email",
+  "type": "email", 
+  "template": {},
+  "isRequired": true,
+  "isUnique": true
+}
+```
+- **Use cases:** Email addresses with validation
+- **Template:** No configuration required
+- **Validation:** Automatic email format validation
+
+### URL
+```json
+{
+  "name": "Website",
+  "type": "url",
+  "template": {},
+  "isRequired": false
+}
+```
+- **Use cases:** Website links, portfolio URLs
+- **Template:** No configuration required
+- **Validation:** Automatic URL format validation
+
+### Phone Number
+```json
+{
+  "name": "Contact Phone",
+  "type": "phone_number",
+  "template": {},
+  "isRequired": false
+}
+```
+- **Use cases:** Phone numbers with formatting
+- **Template:** No configuration required
+
+## Number Fields
+
+### Number
+```json
+{
+  "name": "Quantity",
+  "type": "number",
+  "template": {
+    "decimalPlaces": 2,
+    "numberFormat": "comma_period"
+  },
+  "isRequired": true
+}
+```
+
+<ParamField name="decimalPlaces" type="number">
+  Number of decimal places to display (0-10)
+</ParamField>
+
+<ParamField name="numberFormat" type="string">
+  Formatting style:
+  - `"local"` - Browser locale formatting
+  - `"comma_period"` - 1,234.56
+  - `"period_comma"` - 1.234,56  
+  - `"space_comma"` - 1 234,56
+  - `"space_period"` - 1 234.56
+</ParamField>
+
+### Currency
+```json
+{
+  "name": "Price",
+  "type": "currency", 
+  "template": {
+    "currencySymbol": "$",
+    "decimalPlaces": 2,
+    "numberFormat": "comma_period"
+  },
+  "isRequired": true
+}
+```
+
+<ParamField name="currencySymbol" type="string">
+  Currency symbol to display ($, €, £, etc.)
+</ParamField>
+
+<ParamField name="decimalPlaces" type="number">
+  Decimal places for currency values
+</ParamField>
+
+<ParamField name="numberFormat" type="string">
+  Same formatting options as number field
+</ParamField>
+
+### Percent
+```json
+{
+  "name": "Completion Rate",
+  "type": "percent",
+  "template": {
+    "decimalPlaces": 1,
+    "showProgressBar": true,
+    "allowNegative": false
+  }
+}
+```
+
+<ParamField name="decimalPlaces" type="number">
+  Decimal places to show for percentages
+</ParamField>
+
+<ParamField name="showProgressBar" type="boolean">
+  Display percentage as a visual progress bar
+</ParamField>
+
+<ParamField name="allowNegative" type="boolean">
+  Whether to allow negative percentage values
+</ParamField>
+
+## Selection Fields
+
+### Single Select
+```json
+{
+  "name": "Status",
+  "type": "single_select",
+  "template": {
+    "options": [
+      {
+        "value": "active",
+        "label": "Active", 
+        "color": "green"
+      },
+      {
+        "value": "pending",
+        "label": "Pending",
+        "color": "yellow"
+      },
+      {
+        "value": "inactive", 
+        "label": "Inactive",
+        "color": "red"
+      }
+    ],
+    "disableColors": false
+  },
+  "isRequired": true
+}
+```
+
+<ParamField name="options" type="array" required>
+  Array of option objects, each containing:
+  - `value` (string, required) - Unique option identifier
+  - `label` (string, required) - Display text
+  - `color` (string, optional) - Option color
+</ParamField>
+
+<ParamField name="disableColors" type="boolean">
+  Whether to hide option colors in the interface
+</ParamField>
+
+### Multiple Select
+```json
+{
+  "name": "Tags",
+  "type": "multiple_select",
+  "template": {
+    "options": [
+      {"value": "urgent", "label": "Urgent", "color": "red"},
+      {"value": "feature", "label": "Feature", "color": "blue"},
+      {"value": "bug", "label": "Bug", "color": "orange"}
+    ]
+  }
+}
+```
+- **Configuration:** Same as single_select
+- **Behavior:** Allows multiple option selection
+
+## Date and Time Fields
+
+### Date
+```json
+{
+  "name": "Due Date",
+  "type": "date",
+  "template": {
+    "displayTime": true,
+    "displayTimeZone": false,
+    "dateFormat": "us",
+    "timeFormat": "12h",
+    "timezone": "America/New_York"
+  }
+}
+```
+
+<ParamField name="displayTime" type="boolean">
+  Whether to include time component
+</ParamField>
+
+<ParamField name="displayTimeZone" type="boolean">
+  Whether to show timezone information
+</ParamField>
+
+<ParamField name="dateFormat" type="string">
+  Date format options:
+  - `"local"` - Browser locale format
+  - `"long"` - January 15, 2024
+  - `"us"` - 01/15/2024
+  - `"european"` - 15/01/2024
+  - `"iso"` - 2024-01-15
+</ParamField>
+
+<ParamField name="timeFormat" type="string">
+  Time format: `"12h"` or `"24h"`
+</ParamField>
+
+<ParamField name="timezone" type="string">
+  IANA timezone identifier (e.g., "America/New_York")
+</ParamField>
+
+### Duration
+```json
+{
+  "name": "Meeting Length",
+  "type": "duration",
+  "template": {
+    "format": "h:mm:ss"
+  }
+}
+```
+
+<ParamField name="format" type="string">
+  Duration format options:
+  - `"h:mm"` - 2:30
+  - `"h:mm:ss"` - 2:30:45
+  - `"h:mm:ss.s"` - 2:30:45.1
+  - `"h:mm:ss.ss"` - 2:30:45.12
+  - `"h:mm:ss.sss"` - 2:30:45.123
+</ParamField>
+
+## Other Fields
+
+### Checkbox
+```json
+{
+  "name": "Completed",
+  "type": "checkbox",
+  "template": {
+    "color": "green"
+  }
+}
+```
+
+<ParamField name="color" type="string">
+  Checkbox color when checked
+</ParamField>
+
+### Rating
+```json
+{
+  "name": "Product Rating",
+  "type": "rating",
+  "template": {
+    "maxRating": 5
+  }
+}
+```
+
+<ParamField name="maxRating" type="number">
+  Maximum rating value (typically 5 or 10)
+</ParamField>
+
+### Attachments
+```json
+{
+  "name": "Documents",
+  "type": "attachments",
+  "template": {}
+}
+```
+- **Use cases:** File uploads, document storage
+- **Template:** No configuration required
+
+## Relationship Fields
+
+### Linked Record
+```json
+{
+  "name": "Project Members",
+  "type": "linked_record",
+  "template": {
+    "tableId": "table_users",
+    "allowMultiple": true,
+    "shownInRelationFieldIds": ["field_name", "field_email"]
+  },
+  "isRequired": false
+}
+```
+
+<ParamField name="tableId" type="string" required>
+  ID of the target table to link to
+</ParamField>
+
+<ParamField name="allowMultiple" type="boolean" required>
+  Whether to allow linking multiple records
+</ParamField>
+
+<ParamField name="shownInRelationFieldIds" type="array" required>
+  Array of field IDs to display when showing linked records
+</ParamField>
+
+### Lookup
+```json
+{
+  "name": "Project Name",
+  "type": "lookup",
+  "template": {
+    "linkedRecordFieldId": "field_project_link",
+    "lookupFieldId": "field_project_name"
+  }
+}
+```
+
+<ParamField name="linkedRecordFieldId" type="string" required>
+  Field ID containing the record link
+</ParamField>
+
+<ParamField name="lookupFieldId" type="string" required>
+  Field ID to lookup from the linked table
+</ParamField>
+
+<Note>
+  Lookup fields automatically display values from linked records and update when the source data changes.
+</Note>
+
+## Validation Rules
+
+All field types support these common validation options:
+
+<ParamField name="isRequired" type="boolean">
+  Whether the field must have a value
+</ParamField>
+
+<ParamField name="isUnique" type="boolean">
+  Whether field values must be unique across all records
+</ParamField>
+
+<Warning>
+  Changing field types after data has been added may result in data loss if the new type is incompatible with existing values.
+</Warning> 

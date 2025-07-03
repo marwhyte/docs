@@ -1,0 +1,231 @@
+---
+title: 'Update View'
+description: 'Update an existing view in a base'
+---
+
+Update an existing view's properties in a base. You can modify the view name, filters, sorts, and other display settings.
+
+### Base URL
+```
+PUT https://api.fillout.com/v1/tables/bases/:baseId/views/:viewId
+```
+
+### Parameters
+
+<ParamField header path="baseId" type="string" required>
+  The ID of the base containing the view
+</ParamField>
+
+<ParamField header path="viewId" type="string" required>
+  The ID of the view to update
+</ParamField>
+
+<ParamField body="name" type="string">
+  New name for the view
+</ParamField>
+
+<ParamField body="config" type="object">
+  Optional view configuration object containing:
+  - `filters` (any, optional): Filter settings
+  - `sorts` (array, optional): Sort configurations
+  - `hiddenFields` (array of strings, optional): Hidden field IDs
+  - `fieldWidths` (record of numbers, optional): Field width mappings
+  - `orderedFieldIds` (array of strings, optional): Field order
+</ParamField>
+
+### Filter Configuration
+
+<Expandable title="Filter Object Structure">
+  ```json
+  {
+    "operator": "and | or",
+    "conditions": [
+      {
+        "fieldId": "string",
+        "operator": "equals | not_equals | contains | not_contains | greater_than | less_than | greater_than_or_equals | less_than_or_equals | is_empty | is_not_empty",
+        "value": "any"
+      }
+    ]
+  }
+  ```
+</Expandable>
+
+### Sort Configuration
+
+<Expandable title="Sort Object Structure">
+  ```json
+  {
+    "fieldId": "string",
+    "dir": "asc | desc"
+  }
+  ```
+</Expandable>
+
+### Response
+
+<ResponseField name="id" type="string">
+  View identifier
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Updated view name
+</ResponseField>
+
+<ResponseField name="type" type="string">
+  Always "grid"
+</ResponseField>
+
+<ResponseField name="config" type="object">
+  Updated view configuration
+</ResponseField>
+
+### Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X PUT https://api.fillout.com/v1/tables/bases/base_123/views/view_abc \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated View Name",
+    "config": {
+      "filters": {
+        "operator": "and",
+        "conditions": [
+          {
+            "fieldId": "fld_status",
+            "operator": "equals",
+            "value": "active"
+          }
+        ]
+      },
+      "sorts": [
+        {
+          "fieldId": "fld_created",
+          "dir": "desc"
+        }
+      ],
+      "hiddenFields": ["fld_internal_notes"],
+      "fieldWidths": {
+        "fld_name": 200,
+        "fld_email": 150
+      },
+      "orderedFieldIds": ["fld_name", "fld_email", "fld_status"]
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.fillout.com/v1/tables/bases/base_123/views/view_abc', {
+  method: 'PUT',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Updated View Name',
+    config: {
+      filters: {
+        operator: 'and',
+        conditions: [
+          {
+            fieldId: 'fld_status',
+            operator: 'equals',
+            value: 'active'
+          }
+        ]
+      },
+      sorts: [
+        {
+          fieldId: 'fld_created',
+          dir: 'desc'
+        }
+      ],
+      hiddenFields: ['fld_internal_notes'],
+      fieldWidths: {
+        fld_name: 200,
+        fld_email: 150
+      },
+      orderedFieldIds: ['fld_name', 'fld_email', 'fld_status']
+    }
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.put(
+    'https://api.fillout.com/v1/tables/bases/base_123/views/view_abc',
+    headers={
+        'Authorization': 'Bearer YOUR_API_KEY',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'name': 'Updated View Name',
+        'config': {
+            'filters': {
+                'operator': 'and',
+                'conditions': [
+                    {
+                        'fieldId': 'fld_status',
+                        'operator': 'equals',
+                        'value': 'active'
+                    }
+                ]
+            },
+            'sorts': [
+                {
+                    'fieldId': 'fld_created',
+                    'dir': 'desc'
+                }
+            ],
+            'hiddenFields': ['fld_internal_notes'],
+            'fieldWidths': {
+                'fld_name': 200,
+                'fld_email': 150
+            },
+            'orderedFieldIds': ['fld_name', 'fld_email', 'fld_status']
+        }
+    }
+)
+
+data = response.json()
+```
+</CodeGroup>
+
+### Example Response
+
+```json
+{
+  "id": "view_abc",
+  "name": "Updated View Name",
+  "type": "grid",
+  "config": {
+    "filters": {
+      "operator": "and",
+      "conditions": [
+        {
+          "fieldId": "fld_status",
+          "operator": "equals",
+          "value": "active"
+        }
+      ]
+    },
+    "sorts": [
+      {
+        "fieldId": "fld_created",
+        "dir": "desc"
+      }
+    ],
+    "hiddenFields": ["fld_internal_notes"],
+    "fieldWidths": {
+      "fld_name": 200,
+      "fld_email": 150
+    },
+    "orderedFieldIds": ["fld_name", "fld_email", "fld_status"]
+  }
+}
+``` 

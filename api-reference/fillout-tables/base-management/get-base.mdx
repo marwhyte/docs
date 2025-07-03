@@ -1,0 +1,129 @@
+---
+title: 'Get Base'
+description: 'Retrieves metadata for a specific base'
+---
+
+## Get Base
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.fillout.com/v1/admin/bases/my-base-id" \
+  -H "Authorization: Bearer YOUR_API_TOKEN"
+```
+
+```javascript JavaScript
+const basePublicId = 'my-base-id';
+const response = await fetch(`https://api.fillout.com/v1/admin/bases/${basePublicId}`, {
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN'
+  }
+});
+
+const base = await response.json();
+```
+
+```python Python
+import requests
+
+base_public_id = 'my-base-id'
+response = requests.get(
+    f'https://api.fillout.com/v1/admin/bases/{base_public_id}',
+    headers={
+        'Authorization': 'Bearer YOUR_API_TOKEN'
+    }
+)
+
+base = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 Success
+{
+  "id": "base_12345",
+  "basePublicId": "my-base-id",
+  "name": "Customer Database",
+  "description": "Main customer and prospect database",
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-20T14:22:00Z",
+  "tables": [
+    {
+      "id": "table_001",
+      "name": "Customers",
+      "fieldCount": 8,
+      "recordCount": 542,
+      "createdAt": "2024-01-15T10:35:00Z"
+    },
+    {
+      "id": "table_002", 
+      "name": "Orders",
+      "fieldCount": 12,
+      "recordCount": 1247,
+      "createdAt": "2024-01-16T09:20:00Z"
+    }
+  ],
+  "permissions": {
+    "canEdit": true,
+    "canDelete": true,
+    "canShare": true
+  },
+  "collaborators": [
+    {
+      "userId": "user_456",
+      "email": "john@company.com",
+      "role": "editor",
+      "addedAt": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+```json 404 Not Found
+{
+  "error": "NotFoundError",
+  "message": "Base with ID 'my-base-id' not found or access denied"
+}
+```
+</ResponseExample>
+
+Retrieves detailed metadata for a specific base, including information about its tables and collaborators.
+
+### URL Parameters
+
+<ParamField path="basePublicId" type="string" required>
+  The public identifier of the base to retrieve
+</ParamField>
+
+### Response
+
+Returns a comprehensive base object containing:
+
+**Base Information:**
+- **id** - Internal base identifier
+- **basePublicId** - Public identifier
+- **name** - Base display name
+- **description** - Optional base description
+- **createdAt** / **updatedAt** - Timestamps
+
+**Tables Array:**
+Each table object includes:
+- **id** - Table identifier
+- **name** - Table display name
+- **fieldCount** - Number of fields in the table
+- **recordCount** - Number of records in the table
+- **createdAt** - Table creation timestamp
+
+**Permissions:**
+- **canEdit** - Can modify base and data
+- **canDelete** - Can delete the base
+- **canShare** - Can invite collaborators
+
+**Collaborators Array:**
+- **userId** - Internal user identifier
+- **email** - User's email address
+- **role** - User's role (viewer, editor, admin)
+- **addedAt** - When the user was added
+
+<Info>
+  This endpoint provides a complete overview of the base structure without loading detailed field definitions or record data.
+</Info> 

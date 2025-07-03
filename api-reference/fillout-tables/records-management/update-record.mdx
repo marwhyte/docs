@@ -1,0 +1,249 @@
+---
+title: 'Update Record'
+description: 'Updates specific fields of an existing record'
+---
+
+## Update Record
+
+<RequestExample>
+```bash cURL
+curl -X PUT "https://api.fillout.com/v1/admin/bases/my-base/tables/customers/records/record_abc123" \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "data": {
+      "status": "inactive",
+      "notes": "Customer requested account deactivation"
+    }
+  }'
+```
+
+```javascript JavaScript
+const recordId = 'record_abc123';
+const response = await fetch(`https://api.fillout.com/v1/admin/bases/my-base/tables/customers/records/${recordId}`, {
+  method: 'PUT',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    data: {
+      status: 'inactive',
+      notes: 'Customer requested account deactivation'
+    }
+  })
+});
+
+const updatedRecord = await response.json();
+```
+
+```python Python
+import requests
+
+record_id = 'record_abc123'
+response = requests.put(
+    f'https://api.fillout.com/v1/admin/bases/my-base/tables/customers/records/{record_id}',
+    headers={
+        'Authorization': 'Bearer YOUR_API_TOKEN',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'data': {
+            'status': 'inactive',
+            'notes': 'Customer requested account deactivation'
+        }
+    }
+)
+
+updated_record = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 Success
+{
+  "id": "record_abc123",
+  "data": {
+    "name": "John Smith",
+    "email": "john@example.com",
+    "status": "inactive",
+    "phone": "+1-555-0123",
+    "signup_date": "2024-01-25T10:30:00Z",
+    "notes": "Customer requested account deactivation"
+  },
+  "createdAt": "2024-01-25T10:30:00Z",
+  "updatedAt": "2024-01-26T14:22:00Z",
+  "updatedBy": "user_456"
+}
+```
+
+```json 400 Bad Request
+{
+  "error": "ValidationError",
+  "message": "Invalid value for field 'status'",
+  "details": {
+    "field": "status",
+    "code": "INVALID_OPTION",
+    "value": "unknown_status"
+  }
+}
+```
+
+```json 404 Not Found
+{
+  "error": "NotFoundError",
+  "message": "Record with ID 'record_abc123' not found"
+}
+```
+
+```json 409 Conflict
+{
+  "error": "ConflictError",
+  "message": "Field 'email' must be unique, value already exists",
+  "details": {
+    "field": "email",
+    "code": "DUPLICATE_VALUE",
+    "value": "john@example.com"
+  }
+}
+```
+</ResponseExample>
+
+Updates specific fields of an existing record. Only the fields included in the request body will be modified; other fields remain unchanged.
+
+### URL Parameters
+
+<ParamField path="basePublicId" type="string" required>
+  The public identifier of the base containing the table
+</ParamField>
+
+<ParamField path="tableId" type="string" required>
+  The identifier of the table containing the record
+</ParamField>
+
+<ParamField path="recordId" type="string" required>
+  The unique identifier of the record to update
+</ParamField>
+
+### Request Body
+
+<ParamField body="data" type="object" required>
+  Object containing the field values to update. Only include fields that should be modified.
+  
+  **Partial Updates:** You can update any subset of fields. Fields not included in the request will retain their current values.
+</ParamField>
+
+### Response
+
+Returns the complete updated record object with:
+
+- **id** - Record identifier
+- **data** - All field values (both updated and unchanged)
+- **createdAt** - Original creation timestamp
+- **updatedAt** - New modification timestamp
+- **updatedBy** - ID of the user who made the update
+
+### Update Behaviors by Field Type
+
+<AccordionGroup>
+  <Accordion title="Text and Number Fields">
+    **Replace:** New value completely replaces the existing value
+    ```json
+    {
+      "data": {
+        "name": "Updated Name",
+        "quantity": 150
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Multiple Select Fields">
+    **Replace:** New array completely replaces existing selections
+    ```json
+    {
+      "data": {
+        "tags": ["urgent", "feature"]  // Replaces all existing tags
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Linked Record Fields">
+    **Replace:** New array of record IDs replaces existing links
+    ```json
+    {
+      "data": {
+        "project_members": ["record_user1", "record_user2"]
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Attachment Fields">
+    **Append or Replace:** Depends on how attachments are structured
+    ```json
+    {
+      "data": {
+        "documents": [
+          {"id": "file_123", "name": "contract.pdf"},
+          {"id": "file_456", "name": "invoice.pdf"}
+        ]
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Validation Rules
+
+Updates are subject to the same validation as record creation:
+
+<CardGroup cols={2}>
+  <Card title="Required Fields" icon="exclamation-circle">
+    Cannot set required fields to null or empty values
+  </Card>
+  <Card title="Unique Constraints" icon="fingerprint">
+    Updated values must maintain uniqueness constraints
+  </Card>
+  <Card title="Data Types" icon="check-circle">
+    New values must match the expected field type
+  </Card>
+  <Card title="Field Options" icon="list">
+    Select field updates must use valid option values
+  </Card>
+</CardGroup>
+
+### Clearing Field Values
+
+To clear a field value, set it to `null`:
+
+```json
+{
+  "data": {
+    "optional_field": null,
+    "notes": null
+  }
+}
+```
+
+<Warning>
+  You cannot set required fields to `null`. Attempting to do so will result in a validation error.
+</Warning>
+
+### Optimistic Updates
+
+For better user experience, consider implementing optimistic updates:
+
+1. **Update UI immediately** with expected values
+2. **Send API request** to save changes
+3. **Handle errors** by reverting UI if the request fails
+4. **Sync final state** with the API response
+
+<Info>
+  The `updatedAt` timestamp is automatically set to the current time when any field is modified, even if the new value is the same as the existing value.
+</Info>
+
+<Note>
+  Lookup fields are read-only and cannot be directly updated. They automatically reflect changes when their source linked records are modified.
+</Note> 

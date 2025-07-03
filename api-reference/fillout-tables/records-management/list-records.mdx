@@ -1,0 +1,219 @@
+---
+title: 'List Records'
+description: 'Retrieves records from the specified table with optional filtering and pagination'
+---
+
+## List Records
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.fillout.com/v1/admin/bases/my-base/tables/customers/records?limit=25&filter=%7B%22status%22:%22active%22%7D" \
+  -H "Authorization: Bearer YOUR_API_TOKEN"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  limit: '25',
+  filter: JSON.stringify({ status: 'active' }),
+  sort: JSON.stringify([{ fieldId: 'created_at', direction: 'desc' }])
+});
+
+const response = await fetch(`https://api.fillout.com/v1/admin/bases/my-base/tables/customers/records?${params}`, {
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN'
+  }
+});
+
+const result = await response.json();
+```
+
+```python Python
+import requests
+import json
+
+params = {
+    'limit': 25,
+    'filter': json.dumps({'status': 'active'}),
+    'sort': json.dumps([{'fieldId': 'created_at', 'direction': 'desc'}])
+}
+
+response = requests.get(
+    'https://api.fillout.com/v1/admin/bases/my-base/tables/customers/records',
+    headers={'Authorization': 'Bearer YOUR_API_TOKEN'},
+    params=params
+)
+
+result = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 Success
+{
+  "records": [
+    {
+      "id": "record_abc123",
+      "data": {
+        "name": "John Smith",
+        "email": "john@example.com",
+        "status": "active",
+        "phone": "+1-555-0123",
+        "signup_date": "2024-01-25T10:30:00Z"
+      },
+      "createdAt": "2024-01-25T10:30:00Z",
+      "updatedAt": "2024-01-25T10:30:00Z"
+    },
+    {
+      "id": "record_def456", 
+      "data": {
+        "name": "Jane Doe",
+        "email": "jane@example.com",
+        "status": "active",
+        "phone": "+1-555-0124",
+        "signup_date": "2024-01-24T14:15:00Z"
+      },
+      "createdAt": "2024-01-24T14:15:00Z",
+      "updatedAt": "2024-01-25T09:22:00Z"
+    }
+  ],
+  "pagination": {
+    "hasMore": true,
+    "cursor": "eyJpZCI6InJlY29yZF9kZWY0NTYiLCJjcmVhdGVkQXQiOiIyMDI0LTAxLTI0VDE0OjE1OjAwWiJ9",
+    "total": 47
+  }
+}
+```
+</ResponseExample>
+
+Retrieves records from the specified table with support for filtering, sorting, searching, and pagination.
+
+### URL Parameters
+
+<ParamField path="basePublicId" type="string" required>
+  The public identifier of the base containing the table
+</ParamField>
+
+<ParamField path="tableId" type="string" required>
+  The identifier of the table to retrieve records from
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="limit" type="number" optional>
+  Maximum number of records to return per page. Default: 50, Maximum: 500
+</ParamField>
+
+<ParamField query="cursor" type="string" optional>
+  Pagination cursor for retrieving the next page of results
+</ParamField>
+
+<ParamField query="filter" type="string" optional>
+  JSON string containing filter conditions. Supports various operators for different field types.
+</ParamField>
+
+<ParamField query="sort" type="string" optional>
+  JSON string containing sort configuration with field IDs and directions.
+</ParamField>
+
+<ParamField query="search" type="string" optional>
+  Search term for filtering records across searchable fields
+</ParamField>
+
+### Filter Examples
+
+**Simple field equality:**
+```json
+{
+  "status": "active"
+}
+```
+
+**Multiple conditions (AND):**
+```json
+{
+  "status": "active",
+  "signup_date": {
+    "gte": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+**Comparison operators:**
+```json
+{
+  "age": {
+    "gte": 18,
+    "lt": 65
+  },
+  "name": {
+    "contains": "John"
+  }
+}
+```
+
+**Available operators by field type:**
+
+<AccordionGroup>
+  <Accordion title="Text Fields">
+    - `equals` - Exact match
+    - `contains` - Contains substring
+    - `startsWith` - Starts with text
+    - `endsWith` - Ends with text
+    - `isEmpty` - Field is empty/null
+    - `isNotEmpty` - Field has a value
+  </Accordion>
+  
+  <Accordion title="Number Fields">
+    - `equals` - Exact value
+    - `gt` - Greater than
+    - `gte` - Greater than or equal
+    - `lt` - Less than
+    - `lte` - Less than or equal
+    - `isEmpty` - Field is null
+    - `isNotEmpty` - Field has a value
+  </Accordion>
+  
+  <Accordion title="Date Fields">
+    - `equals` - Exact date/time
+    - `gt` / `gte` / `lt` / `lte` - Date comparisons
+    - `isEmpty` - No date set
+    - `isNotEmpty` - Date is set
+  </Accordion>
+  
+  <Accordion title="Select Fields">
+    - `equals` - Exact option match
+    - `in` - Any of multiple options
+    - `isEmpty` - No selection
+    - `isNotEmpty` - Has selection
+  </Accordion>
+</AccordionGroup>
+
+### Sort Configuration
+
+```json
+[
+  {
+    "fieldId": "signup_date",
+    "direction": "desc"
+  },
+  {
+    "fieldId": "name", 
+    "direction": "asc"
+  }
+]
+```
+
+### Response
+
+Returns paginated records with metadata:
+
+- **records** - Array of record objects with `id`, `data`, timestamps
+- **pagination** - Pagination information including `hasMore`, `cursor`, and `total`
+
+<Info>
+  Use the `cursor` from the response to retrieve the next page of results. The cursor is opaque and should not be modified.
+</Info>
+
+<Note>
+  Search functionality looks across all searchable fields (text, email, phone) and returns records containing the search term in any of these fields.
+</Note> 

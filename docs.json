@@ -11,68 +11,57 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Fillout Tables API",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Getting Started",
+            "pages": ["api-reference/fillout-tables/introduction"]
+          },
+          {
+            "group": "Base Management",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "api-reference/fillout-tables/base-management/create-base",
+              "api-reference/fillout-tables/base-management/list-bases",
+              "api-reference/fillout-tables/base-management/get-base",
+              "api-reference/fillout-tables/base-management/update-base",
+              "api-reference/fillout-tables/base-management/delete-base",
+              "api-reference/fillout-tables/base-management/copy-base"
             ]
           },
           {
-            "group": "Essentials",
+            "group": "Field Management",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "API Documentation",
-            "pages": [
-              "api-reference/introduction"
+              "api-reference/fillout-tables/field-management/create-field",
+              "api-reference/fillout-tables/field-management/update-field",
+              "api-reference/fillout-tables/field-management/delete-field"
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "View Management",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/fillout-tables/view-management/create-view",
+              "api-reference/fillout-tables/view-management/update-view",
+              "api-reference/fillout-tables/view-management/delete-view"
             ]
+          },
+          {
+            "group": "Records Management",
+            "pages": [
+              "api-reference/fillout-tables/records-management/create-record",
+              "api-reference/fillout-tables/records-management/bulk-create-records",
+              "api-reference/fillout-tables/records-management/list-records",
+              "api-reference/fillout-tables/records-management/update-record"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": ["api-reference/fillout-tables/field-types/overview"]
           }
         ]
       }
     ],
     "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
+      "anchors": []
     }
   },
   "logo": {
